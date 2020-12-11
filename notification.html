@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Notification</title>
+</head>
+<body>
+    <button onclick="notify()">Crear notifiación</button>
+    <input id="message" type="text" required>
+    <script>
+        const notify = () => {
+            if (!('Notification' in window)) {
+                alert('Tu navegador no soporta las notificaciones');
+            }
+            else if (Notification.permission === 'granted') {
+                const notification = new Notification(document.getElementById('message').value);
+            }
+            else if (Notification.permission !== 'denied') {
+                Notification.requestPermission(function (permission) {
+                if (permission === "granted") {
+                    var notification = new Notification("Notificaciones permitidas");
+                }
+                });
+            }
+
+        }
+    </script>
+</body>
+</html>

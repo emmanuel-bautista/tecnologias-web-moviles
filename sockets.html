@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sockets</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+        #messages {
+            width: 100%;
+            height: 90vh;
+        }
+    </style>
+</head>
+<body>
+    <ul id="messages" class="list-group"></ul>
+    
+    <form >
+        <div class="row bg-dark p-3">
+            <div class="col-12 col-md-10">
+                <input id="message" autocomplete="off" placeholder="Escribe tu mensaje" class="form-control"/>
+            
+            </div>
+            <div class="col-12 col-md-2">
+                <button type="submit" id="btn-send" class="btn btn-primary btn-block mt-3 mt-md-0">Enviar</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js" integrity="sha512-/seDHxVfh1NvFUscAj8GsHQVZJvr2jjAoYsNL7As2FCaFHUHYIarl3sRCvVlFgyouVNiRgHIebyLKjpgd1SLDw==" crossorigin="anonymous"></script>
+    <script defer>
+            const messages = document.getElementById('messages');
+            // let socket = io('https://chat-perron.herokuapp.com');
+            let socket = io('http://localhost:3000');
+            const btnSend = document.getElementById('btn-send');
+            const user = faker.name.findName();
+
+            btnSend.addEventListener('click', e => {
+                e.preventDefault();
+                let value = document.getElementById('message').value;
+                socket.emit('msg', {
+                    msg: value,
+                    user
+                } );
+                document.getElementById('message').value = "";
+            })
+
+            socket.on('msg', (msg) => {
+                const li = document.createElement('li');
+                const span = document.createElement('span');
+                span.classList.add('font-weight-bold');
+                const userTex = document.createTextNode(msg.user+': ');
+                span.appendChild(userTex);
+                const text = document.createTextNode(`${ msg.msg }`);
+                li.classList.add('list-group-item');
+                li.appendChild(span);
+                li.appendChild(text);
+                
+                messages.appendChild(li);
+
+            });
+    </script>
+</body>
+</html>
